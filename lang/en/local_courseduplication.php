@@ -1,7 +1,7 @@
 <?php
 
-$string['pluginname'] = 'EHL course duplication';
-$string['courseduplication'] = 'EHL course duplication';
+$string['pluginname'] = 'Course duplication';
+$string['courseduplication'] = 'Course duplication';
 $string['courseduplication:backup_course'] = 'Ability to select a course for duplication in the course administration menu';
 $string['courseduplication:restore_course'] = 'Ability to duplicate a course into a course category';
 

@@ -10,5 +10,3 @@ Two capabilities are used to control who can duplicate which courses where:
 * local/courseduplication:backup_course
 * local/courseduplication:restore_course
 
-At install time, the plugin allows the role 'ehlcoursecreator' these permissions, if this role exists.
-

@@ -5,7 +5,10 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            // should probably be assigned to "EHL teacher" role
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'manager'          => CAP_ALLOW
+            // should probably be assigned to "teacher" role
         ),
     ),
     'local/courseduplication:restore_course' => array(
@@ -13,7 +16,9 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
-            // should probably be assigned to "Course Creator (EHL)" role
+            'coursecreator' => CAP_ALLOW,
+            'manager'          => CAP_ALLOW
+            // should probably be assigned to "Course Creator" role
         ),
     ),
 );
