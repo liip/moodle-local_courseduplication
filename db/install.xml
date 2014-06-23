@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/courseduplication/db" VERSION="20130528" COMMENT="XMLDB file for Moodle local/courseduplication"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="courseduplication_queue" COMMENT="Holds information about courses that are scheduled for duplication">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="source course id" PREVIOUS="id" NEXT="categoryid"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Target category id" PREVIOUS="courseid" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 queued 1 running" PREVIOUS="categoryid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id of user who made course duplication request" PREVIOUS="status" NEXT="runid"/>
+        <FIELD NAME="runid" TYPE="char" LENGTH="60" NOTNULL="false" SEQUENCE="false" COMMENT="Used to prevent multiple instances from being duplicated at the same time." PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="coursedupqueue_statusrun" UNIQUE="false" FIELDS="status, runid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
