@@ -1,5 +1,7 @@
 <?php
 
+global $CFG;
+
 require_once(__DIR__ . '/../../backup/util/includes/backup_includes.php');
 require_once(__DIR__ . '/../../backup/util/includes/restore_includes.php');
 
