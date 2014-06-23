@@ -250,7 +250,7 @@ class local_course_duplication_queue {
         $subject = new lang_string($subjectstringkey, 'local_courseduplication', $a, $userlang);
         $body = new lang_string($bodystringkey, 'local_courseduplication', $a, $userlang);
 
-        $user = $DB->get_record('user', array('id' => $job->userid), 'id, firstname, lastname, email, maildisplay');
+        $user = $DB->get_record('user', array('id' => $job->userid));
         $admin = get_admin();
         email_to_user($user, $admin, $subject, $body);
     }

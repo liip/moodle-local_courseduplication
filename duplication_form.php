@@ -7,6 +7,7 @@ class courseduplication_duplication_form extends moodleform{
         global $CFG;
         $mform =& $this->_form;
         $mform->addElement('hidden', 'id'/*,$this->_customdata['courseid']*/);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('select', 'categoryid',
             get_string('targetcategory', 'local_courseduplication'),
             make_categories_options()/*,
