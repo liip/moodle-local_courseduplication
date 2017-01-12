@@ -255,8 +255,17 @@ class local_course_duplication_queue {
         if (count($errors)) {
             $errorstr = new lang_string('error', 'error', null, $userlang);
             $a->errors = $errorstr . ":\n * " . implode("\n * ", $errors);
-            $fromto = "$job->courseid to $job->categoryid: ";
-            add_to_log($job->courseid, 'courseduplication', 'duplication', '', substr($fromto . $a->errors, 0, 255));
+
+            $event = \local_courseduplication\event\duplication_errors::create(
+                array(
+                    'objectid' => $job->courseid,
+                    'context' => context_course::instance($job->courseid),
+                    'other' => array(
+                        'newcategoryid' => $job->categoryid,
+                        'errors' => $a->errors,
+                    )
+                ));
+            $event->trigger();
         } else {
             $a->errors = '';
         }

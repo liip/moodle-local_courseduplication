@@ -70,3 +70,4 @@ $string['process_duplicate_queue'] = 'Process duplicate queue';
 // Events.
 $string['event_duplication_succeeded'] = 'Course duplication succeeded';
 $string['event_duplication_failed'] = 'Course duplication failed';
+$string['event_duplication_errors'] = 'Course duplication had errors';
