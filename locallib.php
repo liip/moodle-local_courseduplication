@@ -272,8 +272,16 @@ class local_course_duplication_queue {
         if (count($warnings)) {
             $warningstr = new lang_string('warning', 'moodle', null, $userlang);
             $a->warnings = $warningstr . ":\n * " . implode("\n * ", $warnings);
-            $fromto = "$job->courseid to $job->categoryid: ";
-            add_to_log($job->courseid, 'courseduplication', 'duplication', '', substr($fromto . $a->warnings, 0, 255));
+            $event = \local_courseduplication\event\duplication_warnings::create(
+                array(
+                    'objectid' => $job->courseid,
+                    'context' => context_course::instance($job->courseid),
+                    'other' => array(
+                        'newcategoryid' => $job->categoryid,
+                        'warnings' => $a->warnings,
+                    )
+                ));
+            $event->trigger();
         } else {
             $a->warnings = '';
         }
