@@ -65,3 +65,4 @@ $string['warningenrollingfailed'] = 'Unable to enrol user id {$a->userid} with r
 $string['duplicatefailedbackup'] = 'The duplicate did not complete successfully, the backup failed';
 $string['duplicatefailedrestore'] = 'The duplicate did not complete successfully, the restore failed';
 $string['errornosuchcategory'] = 'Target category not found';
+$string['process_duplicate_queue'] = 'Process duplicate queue';

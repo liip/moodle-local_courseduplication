@@ -381,3 +381,8 @@ class local_course_duplication_queue {
     }
 
 }
+
+function local_courseduplication_dated_message($message, $dateformat='Y-m-d H:i:s') {
+    $now = date($dateformat);
+    echo "[$now] $message\n";
+}
