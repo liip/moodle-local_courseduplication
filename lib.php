@@ -56,7 +56,7 @@ function local_courseduplication_cron() {
     }
 }
 
-function local_courseduplication_extends_settings_navigation($settingsnav, $context) {
+function local_courseduplication_extend_settings_navigation($settingsnav, $context) {
     global $CFG, $PAGE;
 
     // Only add navigation item on non-site course pages.
