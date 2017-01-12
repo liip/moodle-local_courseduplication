@@ -218,10 +218,18 @@ class local_course_duplication_queue {
                 // from the globals again.
                 global $DB;
             } else {
-                $message = "course id $job->courseid to category $job->categoryid (new course id: $newcourseid)";
-                $info['succeeded'][] = $message;
-                add_to_log($job->courseid, 'courseduplication', 'restore', '',
-                    "duplication succeeded.  " . $message);
+                $info['succeeded'][] = "course id $job->courseid to category $job->categoryid (new course id: $newcourseid)";
+
+                $event = \local_courseduplication\event\duplication_succeeded::create(
+                    array(
+                        'objectid' => $job->courseid,
+                        'context' => context_course::instance($job->courseid),
+                        'other' => array(
+                            'newcourseid' => $newcourseid,
+                            'newcategoryid' => $job->categoryid,
+                        )
+                    ));
+                $event->trigger();
             }
             $this->send_mail($job, $status, $errors, $warnings, $newcourseid, $userlang);
             $DB->delete_records('courseduplication_queue', array('id' => $job->id));
