@@ -210,10 +210,16 @@ class local_course_duplication_queue {
             list($status, $errors, $warnings, $newcourseid) = $this->process_job($job, $userlang);
 
             if ($status == self::STATUS_FAILED) {
-                $message = "course id $job->courseid to category $job->categoryid";
-                $info['failed'][] = $message;
-                add_to_log($job->courseid, 'courseduplication', 'restore', '',
-                    "duplication failed.  " . $message);
+                $info['failed'][] = "course id $job->courseid to category $job->categoryid";
+                $event = \local_courseduplication\event\duplication_failed::create(
+                    array(
+                        'objectid' => $job->courseid,
+                        'context' => context_course::instance($job->courseid),
+                        'other' => array(
+                            'newcategoryid' => $job->categoryid,
+                        )
+                    ));
+                $event->trigger();
                 // Database connection may have been reset if there was a failure.  So pull in $DB
                 // from the globals again.
                 global $DB;

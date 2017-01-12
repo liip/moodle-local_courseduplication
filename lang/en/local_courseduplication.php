@@ -69,3 +69,4 @@ $string['errornosuchcategory'] = 'Target category not found';
 $string['process_duplicate_queue'] = 'Process duplicate queue';
 // Events.
 $string['event_duplication_succeeded'] = 'Course duplication succeeded';
+$string['event_duplication_failed'] = 'Course duplication failed';
