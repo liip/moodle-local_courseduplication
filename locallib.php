@@ -1,4 +1,26 @@
 <?php
+// This file is part of local/courseduplication
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package local/courseduplication
+ * @copyright 2014-2017 Liip <https://www.liip.ch/>
+ * @author Brian King <brian.king@liip.ch>
+ * @author Claude Bossy <claude.bossy@liip.ch>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 global $CFG;
 
@@ -18,9 +40,9 @@ class local_courseduplication_controller
         'logs' => 0
     );
 
-    public function backup_course($courseid, $userid, $log=false)
-    {
-        $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $userid);
+    public function backup_course($courseid, $userid, $log=false) {
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $userid);
         if ($log) {
             ob_end_flush();
             $bc->get_logger()->set_next(new output_indented_logger(backup::LOG_DEBUG, false, true));
@@ -50,11 +72,10 @@ class local_courseduplication_controller
      * @param object $course containing fields: fullname, shortname, category
      * @param array $backup array as returned from $this->backup_course()
      * @param int $userid
-     * @param bool $remove_backupfile whether or not to remove the backup file after restoring
+     * @param bool $removebackupfile whether or not to remove the backup file after restoring
      * @return int newcourseid
      */
-    public function restore_course($course, $backup, $userid, $remove_backupfile=true, $log=false)
-    {
+    public function restore_course($course, $backup, $userid, $removebackupfile=true, $log=false) {
         global $DB, $CFG;
 
         $backupfile = $backup['file'];
@@ -101,7 +122,7 @@ class local_courseduplication_controller
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backup['basepath']);
         }
-        if ($remove_backupfile) {
+        if ($removebackupfile) {
             $backupfile->delete();
         }
         return $newcourseid;
@@ -124,7 +145,7 @@ class local_courseduplication_controller
         return $warnings;
     }
 
-    // gets all people with roles based on the given archetypes teacher or editingteacher in the given course
+    // Gets all people with roles based on the given archetypes teacher or editingteacher in the given course.
     protected function get_archetype_users_in_course($courseid, $archetypes=array('teacher', 'editingteacher')) {
         global $DB;
 
@@ -154,7 +175,7 @@ class local_course_duplication_queue {
 
     protected $runid;
 
-    static function queue($courseid, $categoryid, $userid) {
+    public static function queue($courseid, $categoryid, $userid) {
         global $DB;
         $duplication = new stdClass;
         $duplication->courseid = $courseid;
@@ -292,7 +313,8 @@ class local_course_duplication_queue {
         );
 
         if (!$course = $DB->get_record('course', array('id' => $job->courseid))) {
-            $return[$errors][] = get_string('duplicatefailedbackup', 'local_courseduplication') . ': ' . get_string('invalidcourseid');
+            $return[$errors][] = \
+                get_string('duplicatefailedbackup', 'local_courseduplication') . ': ' . get_string('invalidcourseid');
         }
 
         if (!$category = $DB->get_record('course_categories', array('id' => $job->categoryid))) {
@@ -353,6 +375,7 @@ class local_course_duplication_queue {
     protected function database_reconnect() {
         global $DB;
         $DB->dispose();
+        // @codingStandardsIgnoreLine .
         $GLOBALS['DB'] = null;
         setup_DB();
     }

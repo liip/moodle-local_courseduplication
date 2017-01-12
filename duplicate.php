@@ -1,4 +1,26 @@
 <?php
+// This file is part of local/courseduplication
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package local/courseduplication
+ * @copyright 2014-2017 Liip <https://www.liip.ch/>
+ * @author Brian King <brian.king@liip.ch>
+ * @author Claude Bossy <claude.bossy@liip.ch>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(__DIR__ . '/../../config.php');
 require_once("$CFG->libdir/formslib.php");
@@ -8,7 +30,7 @@ require_once(__DIR__ . '/locallib.php');
 $id = required_param('id', PARAM_INT);
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
 
-$PAGE->set_url('/local/courseduplication/duplicate.php', array('id'=>$id));
+$PAGE->set_url('/local/courseduplication/duplicate.php', array('id' => $id));
 
 if (! $course = $DB->get_record("course", array('id' => $id))) {
     print_error('invalidcourseid');
@@ -45,7 +67,7 @@ echo $OUTPUT->box(
     get_string('duplicatedesc', 'local_courseduplication')
 );
 
-if ($form = $mform->get_data()){
+if ($form = $mform->get_data()) {
     if (!$category = $DB->get_record('course_categories', array('id' => $form->categoryid))) {
         print_error('errornosuchcategory', 'local_courseduplication');
     }
@@ -65,8 +87,8 @@ if ($form = $mform->get_data()){
     echo $OUTPUT->continue_button(new moodle_url('/my/index.php'));
 
 } else {
-    // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-    // or on the first display of the form
+    // This branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
+    // or on the first display of the form.
     echo $OUTPUT->container(get_string('duplicationwillbescheduled', 'local_courseduplication'), 'coursedup-notice');
 
     $mform->set_data(array(

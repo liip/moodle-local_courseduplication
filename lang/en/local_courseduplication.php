@@ -1,4 +1,26 @@
 <?php
+// This file is part of local/courseduplication
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package local/courseduplication
+ * @copyright 2014-2017 Liip <https://www.liip.ch/>
+ * @author Brian King <brian.king@liip.ch>
+ * @author Claude Bossy <claude.bossy@liip.ch>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['pluginname'] = 'Course duplication';
 $string['courseduplication'] = 'Course duplication';
@@ -9,7 +31,7 @@ $string['duplicate'] = 'Duplicate';
 $string['targetcategory'] = 'Target category';
 
 
-// Strings seen by the end user teachers who perform course duplication:
+// Strings seen by the end user teachers who perform course duplication.
 $string['duplicatecourse'] = 'Duplicate course';
 $string['duplicatecourseheader'] = 'Duplicate course: {$a->fullname} ({$a->shortname})';
 $string['duplicatedesc'] = 'This tool allows you to duplicate your Moodle course to a different category. This is useful when you wish to use the same courses activities (documents, assignments, etc.) in a new course session for the next academic period. Please note:
