@@ -81,7 +81,7 @@ class local_courseduplication_controller
         $backupfile = $backup['file'];
         // Check if we need to unzip the file because the backup temp dir does not contains backup files.
         if (!file_exists($backup['basepath'] . "/moodle_backup.xml")) {
-            $backupfile->extract_to_pathname(get_file_packer(), $backup['basepath']);
+            $backupfile->extract_to_pathname(get_file_packer('application/vnd.moodle.backup'), $backup['basepath']);
         }
 
         $newcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname, $course->category);
