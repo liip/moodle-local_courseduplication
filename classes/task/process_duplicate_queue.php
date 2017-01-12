@@ -25,7 +25,7 @@ namespace local_courseduplication\task;
 
 class process_duplicate_queue extends \core\task\scheduled_task {
     public function get_name() {
-        // Shown in admin screens
+        // Shown in admin screens.
         return get_string('process_duplicate_queue', 'local_courseduplication');
     }
 
