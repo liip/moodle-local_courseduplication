@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $CFG;
+defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../backup/util/includes/backup_includes.php');
 require_once(__DIR__ . '/../../backup/util/includes/restore_includes.php');

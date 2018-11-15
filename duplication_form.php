@@ -22,13 +22,14 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
-class courseduplication_duplication_form extends moodleform{
+class courseduplication_duplication_form extends moodleform {
 
     protected function definition() {
         global $CFG;
         $mform =& $this->_form;
-        $mform->addElement('hidden', 'id'/*,$this->_customdata['courseid']*/);
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('select', 'categoryid',
             get_string('targetcategory', 'local_courseduplication'),
