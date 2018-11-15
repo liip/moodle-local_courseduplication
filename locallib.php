@@ -189,6 +189,9 @@ class local_course_duplication_queue {
         $this->runid = uniqid(getmypid(), true);
     }
 
+    /**
+     * Process the queue and launch job processes sequentially
+     */
     public function process_queue() {
         global $DB;
         $info = array(
@@ -328,6 +331,9 @@ class local_course_duplication_queue {
             array('status' => self::STATUS_RUNNING, 'runid' => $this->runid));
     }
 
+    /**
+     * Process a job from the queue
+     */
     protected function process_job($job, $stringlang='en') {
         global $DB;
 
