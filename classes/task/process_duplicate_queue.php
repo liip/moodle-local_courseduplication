@@ -45,27 +45,21 @@ class process_duplicate_queue extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/local/courseduplication/locallib.php');
 
         $queue = new \local_course_duplication_queue();
-        echo "\n\n";
-        local_courseduplication_dated_message('Processing course duplication queue');
+        mtrace('Processing course duplication queue …');
         $info = $queue->process_queue();
-        local_courseduplication_dated_message('Queue processed.  Results:');
 
         $processedcount = count($info['succeeded']) + count($info['failed']);
-        if ($processedcount == 0) {
-            echo "No jobs processed\n";
-        } else {
-            echo "$processedcount jobs processed\n";
-            if (count($info['succeeded'])) {
-                echo "\nSucceeded: \n";
-                foreach ($info['succeeded'] as $detail) {
-                    echo '  *  ' . $detail . "\n";
-                }
+        mtrace("Queue processed: $processedcount jobs processed.");
+        if (count($info['succeeded'])) {
+            mtrace("Succeeded:");
+            foreach ($info['succeeded'] as $detail) {
+                mtrace('  *  ' . $detail);
             }
-            if (count($info['failed'])) {
-                echo "\nFailed: \n";
-                foreach ($info['failed'] as $detail) {
-                    echo '  *  ' . $detail . "\n";
-                }
+        }
+        if (count($info['failed'])) {
+            mtrace("Failed:");
+            foreach ($info['failed'] as $detail) {
+                mtrace('  *  ' . $detail);
             }
         }
     }
