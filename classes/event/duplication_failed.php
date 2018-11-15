@@ -16,7 +16,7 @@
 
 /**
  * @package local/courseduplication
- * @copyright 2017 Liip <https://www.liip.ch/>
+ * @copyright 2017-2018 Liip AG <https://www.liip.ch/>
  * @author Didier Raboud <didier.raboud@liip.ch>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

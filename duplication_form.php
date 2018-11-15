@@ -16,7 +16,7 @@
 
 /**
  * @package local/courseduplication
- * @copyright 2014-2017 Liip <https://www.liip.ch/>
+ * @copyright 2014-2018 Liip AG <https://www.liip.ch/>
  * @author Brian King <brian.king@liip.ch>
  * @author Claude Bossy <claude.bossy@liip.ch>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
