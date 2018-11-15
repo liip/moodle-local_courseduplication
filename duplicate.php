@@ -22,10 +22,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
-require_once("$CFG->libdir/formslib.php");
-require_once(__DIR__ . '/duplication_form.php');
-require_once(__DIR__ . '/locallib.php');
+require_once('../../config.php');
+
+require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/local/courseduplication/duplication_form.php');
+require_once($CFG->dirroot . '/local/courseduplication/locallib.php');
 
 $id = required_param('id', PARAM_INT);
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
@@ -80,16 +81,23 @@ if ($form = $mform->get_data()) {
     }
 
     local_course_duplication_queue::queue($course->id, $category->id, $USER->id);
-    echo $OUTPUT->notification(
-        get_string('duplicationscheduled', 'local_courseduplication'), 'coursedup-notice'
-    );
+
+    $notification = new \core\output\notification(
+            get_string('duplicationscheduled', 'local_courseduplication'),
+            \core\output\notification::NOTIFY_WARNING);
+    $notification->set_show_closebutton(false);
+    echo $OUTPUT->render($notification);
 
     echo $OUTPUT->continue_button(new moodle_url('/my/index.php'));
 
 } else {
     // This branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
     // or on the first display of the form.
-    echo $OUTPUT->container(get_string('duplicationwillbescheduled', 'local_courseduplication'), 'coursedup-notice');
+    $notification = new \core\output\notification(
+            get_string('duplicationwillbescheduled', 'local_courseduplication'),
+            \core\output\notification::NOTIFY_INFO);
+    $notification->set_show_closebutton(false);
+    echo $OUTPUT->render($notification);
 
     $mform->set_data(array(
         'categoryid' => $categoryid ? $categoryid : $course->category,
