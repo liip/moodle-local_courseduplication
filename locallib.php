@@ -303,8 +303,8 @@ class local_course_duplication_queue {
         $body = new lang_string($bodystringkey, 'local_courseduplication', $a, $userlang);
 
         $user = $DB->get_record('user', array('id' => $job->userid));
-        $admin = get_admin();
-        email_to_user($user, $admin, $subject, $body);
+
+        email_to_user($user, \core_user::get_noreply_user(), $subject, $body);
     }
 
     /**

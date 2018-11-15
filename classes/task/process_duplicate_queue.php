@@ -21,18 +21,28 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace local_courseduplication\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 class process_duplicate_queue extends \core\task\scheduled_task {
+    /**
+     * Get a descriptive name for this task (shown to admins).
+     *
+     * @return string
+     */
     public function get_name() {
-        // Shown in admin screens.
         return get_string('process_duplicate_queue', 'local_courseduplication');
     }
 
+    /**
+     * Do the job.
+     * Throw exceptions on errors (the job will be retried).
+     */
     public function execute() {
-        require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');
+        global $CFG;
+
+        require_once($CFG->dirroot . '/local/courseduplication/locallib.php');
 
         $queue = new \local_course_duplication_queue();
         echo "\n\n";
