@@ -48,6 +48,10 @@ class process_duplicate_queue extends \core\task\scheduled_task {
         mtrace('Processing course duplication queue …');
         $info = $queue->process_queue();
 
+        if (!is_array($info)) {
+            return;
+        }
+
         $processedcount = count($info['succeeded']) + count($info['failed']);
         mtrace("Queue processed: $processedcount jobs processed.");
         if (count($info['succeeded'])) {
