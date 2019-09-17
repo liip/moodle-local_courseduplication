@@ -333,6 +333,11 @@ class local_course_duplication_queue {
 
     /**
      * Process a job from the queue
+     * @param $job
+     * @param string $stringlang
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
      */
     protected function process_job($job, $stringlang='en') {
         global $DB;
@@ -349,16 +354,26 @@ class local_course_duplication_queue {
             $courseid => 0
         );
 
+        // Course to duplicate.
         if (!$course = $DB->get_record('course', array('id' => $job->courseid))) {
             $return[$errors][] = \
                 get_string('duplicatefailedbackup', 'local_courseduplication') . ': ' . get_string('invalidcourseid');
         }
 
+        // Target category.
         if (!$category = $DB->get_record('course_categories', array('id' => $job->categoryid))) {
             $string1 = new lang_string('duplicatefailedbackup', 'local_courseduplication', null, $stringlang);
             $string2 = new lang_string('errornosuchcategory', 'local_courseduplication', null, $stringlang);
             $return[$errors][] = $string1 . ': ' . $string2;
         }
+
+        // Target full title
+        $fulltitle = $job->targetfullname;
+
+        // Target short title
+        $shortname = $job->targetshortname;
+
+        var_dump($job);
 
         if (count($return[$errors])) {
             return $return;

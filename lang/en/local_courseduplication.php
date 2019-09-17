@@ -34,10 +34,11 @@ $string['targetcategory'] = 'Target category';
 // Strings seen by the end user teachers who perform course duplication.
 $string['duplicatecourse'] = 'Duplicate course';
 $string['duplicatecourseheader'] = 'Duplicate course: {$a->fullname} ({$a->shortname})';
-$string['duplicatedesc'] = 'This tool allows you to duplicate your Moodle course to a different category. This is useful when you wish to use the same courses activities (documents, assignments, etc.) in a new course session for the next academic period. Please note:
+$string['duplicatedesc'] = '<p>This tool allows you to duplicate your Moodle course to a different category. This is useful when you wish to use the same courses activities (documents, assignments, etc.) in a new course session for the next academic period.</p><p>Please note:</p>
 <ul>
-    <li>All your activities will be copied,</li>
-    <li>No student information will be copied, no students will be enrolled in the new Moodle course,</li>
+    <li>All your activities will be copied ;</li>
+    <li>No student information will be copied ;</li>
+    <li>Only participants of the selected role(s) will be enrolled in the new course ;</li>
     <li>You will have to access the new course settings to set its enrolment key.</li>
 </ul>';
 $string['duplicationwillbescheduled'] = 'Your course duplication request will be scheduled for execution.  You will receive an email when this is complete.  By default, this is configured to happen every 15 minutes.';
@@ -71,3 +72,6 @@ $string['process_duplicate_queue'] = 'Process duplicate queue';
 $string['event_duplication_succeeded'] = 'Course duplication succeeded';
 $string['event_duplication_failed'] = 'Course duplication failed';
 $string['event_duplication_errors'] = 'Course duplication had errors';
+
+$string['enrolfromroles'] = '';
+$string['enrolfromroles_help'] = 'Automatically enrol (in the new course) the users that have the following roles (in the base course). If you leave "No selection", no enrolment will be replicated.';
