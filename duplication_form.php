@@ -26,10 +26,12 @@ defined('MOODLE_INTERNAL') || die();
 
 class courseduplication_duplication_form extends moodleform {
 
-    private function get_roles($context) {
-//        $context = context_system::instance();
-        $roles = get_default_enrol_roles($context);
-        return $roles;
+    private function get_groups($courseid) {
+        $groups = [];
+        foreach (groups_get_all_groups($courseid) as $groupobj) {
+            $groups[$groupobj->id] = $groupobj->name;
+        }
+        return $groups;
     }
 
     /**
@@ -58,24 +60,18 @@ class courseduplication_duplication_form extends moodleform {
             'required', null, 'client');
 
         // Copied course name
-        // $context = context_course::instance();
-//        ini_set('xdebug.var_display_max_depth', '1');
-//        ini_set('xdebug.var_display_max_children', '1');
-//        ini_set('xdebug.var_display_max_data', '1');
-//
-//        echo "<pre style='display:block;overflow:hidden;margin-top:100px'>";
-//        var_dump($basecourse);
-//        echo "</pre>";
         $mform->addElement('text','targetfullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
         $mform->addHelpButton('targetfullname', 'fullnamecourse');
         $mform->setType('targetfullname', PARAM_TEXT);
         $mform->setDefault('targetfullname', $basecoursecontext->get_context_name(false) . " copy 1");
+        $mform->addRule('targetfullname', get_string('missingfullname'), 'required', null);
 
         // Copied course short name
         $mform->addElement('text', 'targetshortname', get_string('shortnamecourse'), 'maxlength="100" size="20"');
         $mform->addHelpButton('targetshortname', 'shortnamecourse');
         $mform->setType('targetshortname', PARAM_TEXT);
         $mform->setDefault('targetshortname', $basecoursecontext->get_context_name(false, true) . "_1");
+        $mform->addRule('targetshortname', get_string('missingshortname'), 'required', null);
 
         // Copied course startdate
         $mform->addElement('date_time_selector', 'targetstartdate', get_string('startdate'));
@@ -96,25 +92,20 @@ class courseduplication_duplication_form extends moodleform {
             $mform->addElement('advcheckbox', 'targetautomaticenddate', get_string('automaticenddate', 'format_weeks'));
             $mform->addHelpButton('targetautomaticenddate', 'automaticenddate', 'format_weeks');
             $mform->setDefault('targetautomaticenddate', $baseautomaticenddate);
-
             $mform->disabledIf('targetenddate', 'targetautomaticenddate', 'checked');
         }
 
-//        $options = array(
-//            'ajax' => 'tool_lp/form-cohort-selector',
-//            'multiple' => true,
-//            'data-contextid' => $this->_customdata['pagecontextid'],
-//            'data-includes' => 'parents'
-//        );
-//        $mform->addElement('autocomplete', 'cohorts', get_string('selectcohortstosync', 'tool_lp'), array(), $options);
+        // Copy roles
+        $mform->addElement('autocomplete', 'coursegroups', get_string('coursegroups', 'local_courseduplication'),
+            $this->get_groups($basecourseid), array('multiple' => true)
+        );
+        $mform->addHelpButton('coursegroups', 'coursegroups', 'local_courseduplication');
 
-        $mform->addElement(
-            'autocomplete', 'enrolfromroles', get_string('courserole', 'filters'),
-            $this->get_roles($basecoursecontext), array('multiple' => true)
+        // Enrol from roles
+        $mform->addElement('autocomplete', 'enrolfromroles', get_string('enrolfromroles', 'local_courseduplication'),
+            get_default_enrol_roles($basecoursecontext), array('multiple' => true)
         );
         $mform->addHelpButton('enrolfromroles', 'enrolfromroles', 'local_courseduplication');
-
-//        $objs['role']->setLabel(get_string('courserole', 'filters'));
 
         $this->add_action_buttons(true, get_string('duplicate', 'local_courseduplication'));
 

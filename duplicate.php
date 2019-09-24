@@ -84,7 +84,7 @@ if ($form = $mform->get_data()) {
         );
     }
 
-    local_course_duplication_queue::queue($course->id, $category->id, $USER->id);
+    local_course_duplication_queue::queue($USER->id, $form);
 
     $notification = new \core\output\notification(
             get_string('duplicationscheduled', 'local_courseduplication'),

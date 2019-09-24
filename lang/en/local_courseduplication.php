@@ -73,5 +73,8 @@ $string['event_duplication_succeeded'] = 'Course duplication succeeded';
 $string['event_duplication_failed'] = 'Course duplication failed';
 $string['event_duplication_errors'] = 'Course duplication had errors';
 
-$string['enrolfromroles'] = '';
+$string['enrolfromroles'] = 'Enrol users having role(s)';
+$string['enrolfromroles_excluded'] = 'Role(s) selected for enrolment must also be selected in "Course roles" field for creation.';
 $string['enrolfromroles_help'] = 'Automatically enrol (in the new course) the users that have the following roles (in the base course). If you leave "No selection", no enrolment will be replicated.';
+$string['coursegroups'] = 'Course groups';
+$string['coursegroups_help'] = 'Create these groups in the new course';

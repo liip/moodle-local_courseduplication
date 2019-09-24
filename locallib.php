@@ -175,13 +175,26 @@ class local_course_duplication_queue {
 
     protected $runid;
 
-    public static function queue($courseid, $categoryid, $userid) {
+    public static function queue($userid, $data) {
         global $DB;
+        echo "<pre>";
+        var_dump($userid, $data);
+        echo "</pre>";
         $duplication = new stdClass;
-        $duplication->courseid = $courseid;
-        $duplication->categoryid = $categoryid;
+        $duplication->courseid = $data->id;
+        $duplication->categoryid = $data->categoryid;
         $duplication->status = self::STATUS_QUEUED;
         $duplication->userid = $userid;
+        $duplication->fullname = $data->targetfullname;
+        $duplication->shortname = $data->targetshortname;
+        $duplication->startdate = $data->targetstartdate;
+
+        // TODO Check that enddate is correct if targetautomaticenddate === "1"
+        $duplication->enddate = $data->targetenddate;
+
+        $duplication->coursegroups = $data->coursegroups;
+        $duplication->enrolfromroles = $data->enrolfromroles;
+
         $DB->insert_record('courseduplication_queue', $duplication);
     }
 
@@ -367,13 +380,7 @@ class local_course_duplication_queue {
             $return[$errors][] = $string1 . ': ' . $string2;
         }
 
-        // Target full title
-        $fulltitle = $job->targetfullname;
-
-        // Target short title
-        $shortname = $job->targetshortname;
-
-        var_dump($job);
+//        var_dump($job);
 
         if (count($return[$errors])) {
             return $return;
@@ -398,8 +405,8 @@ class local_course_duplication_queue {
         }
 
         $newcourse = new stdClass();
-        $newcourse->fullname = $course->fullname . ' copy';
-        $newcourse->shortname = $course->shortname . 'copy';
+        $newcourse->fullname = $job->targetfullname;
+        $newcourse->shortname = $job->targetshortname;
         $newcourse->category = $category->id;
 
         try {
