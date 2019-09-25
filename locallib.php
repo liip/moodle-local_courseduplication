@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../backup/util/includes/backup_includes.php');
 require_once(__DIR__ . '/../../backup/util/includes/restore_includes.php');
+require_once(__DIR__ . '/../../group/lib.php');
+require_once(__DIR__ . '/../../course/format/weeks/lib.php');
 
 class local_courseduplication_controller
 {
@@ -37,7 +39,8 @@ class local_courseduplication_controller
         'users' => 0,
         'role_assignments' => 0,
         'comments' => 0,
-        'logs' => 0
+        'logs' => 0,
+        'groups' => 0,
     );
 
     public function backup_course($courseid, $userid, $log=false) {
@@ -73,7 +76,13 @@ class local_courseduplication_controller
      * @param array $backup array as returned from $this->backup_course()
      * @param int $userid
      * @param bool $removebackupfile whether or not to remove the backup file after restoring
+     * @param bool $log
      * @return int newcourseid
+     * @throws base_logger_exception
+     * @throws base_plan_exception
+     * @throws base_setting_exception
+     * @throws moodle_exception
+     * @throws restore_controller_exception
      */
     public function restore_course($course, $backup, $userid, $removebackupfile=true, $log=false) {
         global $DB, $CFG;
@@ -85,8 +94,12 @@ class local_courseduplication_controller
         }
 
         $newcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname, $course->category);
-        $rc = new restore_controller($backup['id'], $newcourseid,
-                backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $userid, backup::TARGET_NEW_COURSE);
+
+        $rc = new restore_controller(
+            $backup['id'], $newcourseid, backup::INTERACTIVE_NO,
+            backup::MODE_SAMESITE, $userid, backup::TARGET_NEW_COURSE
+        );
+
         if ($log) {
             $rc->get_logger()->set_next(new output_indented_logger(backup::LOG_DEBUG, false, true));
         }
@@ -117,8 +130,26 @@ class local_courseduplication_controller
             }
         }
 
+        // Executing restoration will copy content (sections, activities, ...)
+        // But it will override the data defined in the duplication_form.
+        // It also uses the default course format options.
         $rc->execute_plan();
         $rc->destroy();
+
+        // So, update the record afterward with our custom values.
+        $course->id = $newcourseid;
+        $DB->update_record('course', $course);
+
+        // Also update course format option (weeks -> automaticenddate).
+        $cfo = $DB->get_record('course_format_options', array(
+            'courseid' => $course->id,
+            'name' => 'automaticenddate'
+        ));
+        $DB->update_record('course_format_options', (object)array(
+            'id' => $cfo->id,
+            'value' => $course->automaticenddate
+        ));
+
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backup['basepath']);
         }
@@ -128,41 +159,70 @@ class local_courseduplication_controller
         return $newcourseid;
     }
 
-    public function copy_teachers($oldcourseid, $newcourseid, $warninglang='en') {
+    /**
+     * Create new groups, copied from existing $groupidlist, in the course identified
+     * by $courseid.
+     *
+     * @param $courseid
+     * @param $groupidlist
+     * @return array
+     * @throws dml_exception
+     * @throws coding_exception
+     */
+    public function copy_groups($courseid, $groupidlist) {
         global $DB;
+        $errors = array();
 
-        $roleusers = $this->get_archetype_users_in_course($oldcourseid);
+        $groups = $DB->get_records_list('groups', 'id', $groupidlist);
 
-        $warnings = array();
-        foreach ($roleusers as $roleid => $roleusers) {
+        foreach ($groups as $group) {
+            $groupdata = new stdClass();
+            $groupdata->courseid = $courseid;
+
+            $groupdata->name = $group->name;
+            $groupdata->description = $group->description;
+            $groupdata->descriptionformat = $group->descriptionformat;
+            // Also available in $group:
+            // enrolmentkey, picture, hidepicture.
+            // Unwanted or not taken upon group creation:
+            // id, courseid, idnumber, timecreated, timemodified.
+
+            try {
+                groups_create_group($groupdata);
+            } catch (Exception $e) {
+                $string = new lang_string('warningcopygroupfailed', 'local_courseduplication', array(
+                    'groupname' => $group->name,
+                    'reason' => $e->getMessage(),
+                ));
+                $errors[] = $string->out();
+            }
+        }
+        return $errors;
+    }
+
+    public function enrol_from_roles($basecourseid, $newcourseid, $roleidlist) {
+        // Get users enrolled in the basecourse with a role included in $roleidlist
+        $users = array();
+        foreach ($roleidlist as $roleid) {
+            if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid))) {
+                $users[$roleid] = $roleusers;
+            }
+        }
+
+        // Enrol these users in the new course
+        $errors = array();
+        foreach ($users as $roleid => $roleusers) {
             foreach ($roleusers as $user) {
                 if (!enrol_try_internal_enrol($newcourseid, $user->id, $roleid)) {
-                    $string = new lang_string('warningenrollingfailed', 'local_courseduplication', null, $warninglang);
-                    $warnings[] = $string->out();
+                    $string = new lang_string('warningenrollingfailed', 'local_courseduplication', array(
+                        "userid" => $user->id,
+                        "roleid" => $roleid,
+                    ));
+                    $errors[] = $string->out();
                 }
             }
         }
-        return $warnings;
-    }
-
-    // Gets all people with roles based on the given archetypes teacher or editingteacher in the given course.
-    protected function get_archetype_users_in_course($courseid, $archetypes=array('teacher', 'editingteacher')) {
-        global $DB;
-
-        list ($archetypesql, $archetypeparams) = $DB->get_in_or_equal($archetypes);
-        $roles = $DB->get_records_select('role', "archetype $archetypesql", $archetypeparams, '', 'id');
-        if (!$roles) {
-            debugging('No roles found.  Looked for roles of archetype: ' . implode(',', $archetypes));
-        }
-
-        $coursecontext = context_course::instance($courseid);
-        $users = array();
-        foreach ($roles as $role) {
-            if ($roleusers = get_role_users($role->id, $coursecontext)) {
-                $users[$role->id] = $roleusers;
-            }
-        }
-        return $users;
+        return $errors;
     }
 }
 
@@ -175,12 +235,15 @@ class local_course_duplication_queue {
 
     protected $runid;
 
+    /**
+     * Retrieve the queued task data, some are course attributes but not necessarily.
+     * @param $userid int The user who submitted the duplication form.
+     * @param $data stdClass The duplication form data
+     * @throws dml_exception
+     */
     public static function queue($userid, $data) {
         global $DB;
-        echo "<pre>";
-        var_dump($userid, $data);
-        echo "</pre>";
-        $duplication = new stdClass;
+        $duplication = new stdClass();
         $duplication->courseid = $data->id;
         $duplication->categoryid = $data->categoryid;
         $duplication->status = self::STATUS_QUEUED;
@@ -188,12 +251,10 @@ class local_course_duplication_queue {
         $duplication->fullname = $data->targetfullname;
         $duplication->shortname = $data->targetshortname;
         $duplication->startdate = $data->targetstartdate;
-
-        // TODO Check that enddate is correct if targetautomaticenddate === "1"
         $duplication->enddate = $data->targetenddate;
-
-        $duplication->coursegroups = $data->coursegroups;
-        $duplication->enrolfromroles = $data->enrolfromroles;
+        $duplication->automaticenddate = $data->targetautomaticenddate;
+        $duplication->coursegroups = serialize($data->coursegroups);
+        $duplication->enrolfromroles = serialize($data->enrolfromroles);
 
         $DB->insert_record('courseduplication_queue', $duplication);
     }
@@ -262,7 +323,7 @@ class local_course_duplication_queue {
     protected function send_mail($job, $status, $errors, $warnings, $newcourseid, $userlang) {
         global $DB;
 
-        $a = new stdClass;
+        $a = new stdClass();
         $oldcourse = $DB->get_record('course', array('id' => $job->courseid), 'id, fullname, shortname');
         $a->oldfullname = $oldcourse->fullname;
         $category = $DB->get_record('course_categories', array('id' => $job->categoryid), 'id, name');
@@ -380,8 +441,6 @@ class local_course_duplication_queue {
             $return[$errors][] = $string1 . ': ' . $string2;
         }
 
-//        var_dump($job);
-
         if (count($return[$errors])) {
             return $return;
         }
@@ -405,9 +464,13 @@ class local_course_duplication_queue {
         }
 
         $newcourse = new stdClass();
-        $newcourse->fullname = $job->targetfullname;
-        $newcourse->shortname = $job->targetshortname;
+        $newcourse->fullname = $job->fullname;
+        $newcourse->shortname = $job->shortname;
         $newcourse->category = $category->id;
+
+        $newcourse->startdate = $job->startdate;
+        $newcourse->enddate = $job->enddate;
+        $newcourse->automaticenddate = $job->automaticenddate;
 
         try {
             $return[$courseid] = $dup->restore_course($newcourse, $backup, $admin->id);
@@ -419,8 +482,19 @@ class local_course_duplication_queue {
             return $return;
         }
 
+        $return[$warnings] = $dup->copy_groups($return[$courseid], unserialize($job->coursegroups));
+
+        array_merge(
+            $return[$warnings],
+            $dup->enrol_from_roles($job->courseid, $return[$courseid], unserialize($job->enrolfromroles))
+        );
+
+        if ($job->automaticenddate === '1') {
+            format_weeks::update_end_date($return[$courseid]);
+        }
+
         $return[$status] = self::STATUS_SUCCESS;
-        $return[$warnings] = $dup->copy_teachers($course->id, $return[$courseid]);
+
         return $return;
     }
 

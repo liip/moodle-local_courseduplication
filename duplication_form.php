@@ -70,7 +70,7 @@ class courseduplication_duplication_form extends moodleform {
         $mform->addElement('text', 'targetshortname', get_string('shortnamecourse'), 'maxlength="100" size="20"');
         $mform->addHelpButton('targetshortname', 'shortnamecourse');
         $mform->setType('targetshortname', PARAM_TEXT);
-        $mform->setDefault('targetshortname', $basecoursecontext->get_context_name(false, true) . "_1");
+        $mform->setDefault('targetshortname', $basecoursecontext->get_context_name(false, true) . "_copy_1");
         $mform->addRule('targetshortname', get_string('missingshortname'), 'required', null);
 
         // Copied course startdate
