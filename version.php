@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018111600;
+$plugin->version   = 2019093000;
 $plugin->requires  = 2016052300; // Moodle 3.1+.
 $plugin->component = 'local_courseduplication';
 $plugin->maturity  = MATURITY_STABLE;
