@@ -50,7 +50,7 @@ class courseduplication_duplication_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        // Target category
+        // Target category.
         $mform->addElement('select', 'categoryid',
             get_string('targetcategory', 'local_courseduplication'),
             make_categories_options()
@@ -59,26 +59,26 @@ class courseduplication_duplication_form extends moodleform {
         $mform->addRule('categoryid', get_string('errormissingcategory', 'local_courseduplication'),
             'required', null, 'client');
 
-        // Copied course name
-        $mform->addElement('text','targetfullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
+        // Copied course name.
+        $mform->addElement('text', 'targetfullname', get_string('fullnamecourse'), 'maxlength="254" size="50"');
         $mform->addHelpButton('targetfullname', 'fullnamecourse');
         $mform->setType('targetfullname', PARAM_TEXT);
         $mform->setDefault('targetfullname', $basecoursecontext->get_context_name(false) . " copy 1");
         $mform->addRule('targetfullname', get_string('missingfullname'), 'required', null);
 
-        // Copied course short name
+        // Copied course short name.
         $mform->addElement('text', 'targetshortname', get_string('shortnamecourse'), 'maxlength="100" size="20"');
         $mform->addHelpButton('targetshortname', 'shortnamecourse');
         $mform->setType('targetshortname', PARAM_TEXT);
         $mform->setDefault('targetshortname', $basecoursecontext->get_context_name(false, true) . "_copy_1");
         $mform->addRule('targetshortname', get_string('missingshortname'), 'required', null);
 
-        // Copied course startdate
+        // Copied course startdate.
         $mform->addElement('date_time_selector', 'targetstartdate', get_string('startdate'));
         $mform->addHelpButton('targetstartdate', 'startdate');
         $mform->setDefault('targetstartdate', $basecourse->startdate);
 
-        // Copied course enddate
+        // Copied course enddate.
         $mform->addElement('date_time_selector', 'targetenddate', get_string('enddate'));
         $mform->addHelpButton('targetenddate', 'enddate');
         $mform->setDefault('targetenddate', $basecourse->enddate);
@@ -95,13 +95,13 @@ class courseduplication_duplication_form extends moodleform {
             $mform->disabledIf('targetenddate', 'targetautomaticenddate', 'checked');
         }
 
-        // Copy roles
+        // Copy roles.
         $mform->addElement('autocomplete', 'coursegroups', get_string('coursegroups', 'local_courseduplication'),
             $this->get_groups($basecourseid), array('multiple' => true)
         );
         $mform->addHelpButton('coursegroups', 'coursegroups', 'local_courseduplication');
 
-        // Enrol from roles
+        // Enrol from roles.
         $mform->addElement('autocomplete', 'enrolfromroles', get_string('enrolfromroles', 'local_courseduplication'),
             get_default_enrol_roles($basecoursecontext), array('multiple' => true)
         );

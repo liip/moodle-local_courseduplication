@@ -201,7 +201,7 @@ class local_courseduplication_controller
     }
 
     public function enrol_from_roles($basecourseid, $newcourseid, $roleidlist) {
-        // Get users enrolled in the basecourse with a role included in $roleidlist
+        // Get users enrolled in the basecourse with a role included in $roleidlist.
         $users = array();
         foreach ($roleidlist as $roleid) {
             if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid))) {
@@ -209,7 +209,7 @@ class local_courseduplication_controller
             }
         }
 
-        // Enrol these users in the new course
+        // Enrol these users in the new course.
         $errors = array();
         foreach ($users as $roleid => $roleusers) {
             foreach ($roleusers as $user) {
