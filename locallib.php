@@ -288,6 +288,8 @@ class local_course_duplication_queue {
 
             if ($status == self::STATUS_FAILED) {
                 $info['failed'][] = "course id $job->courseid to category $job->categoryid";
+                $info['failed'] = array_merge($info['failed'], $errors);
+
                 $event = \local_courseduplication\event\duplication_failed::create(
                     array(
                         'objectid' => $job->courseid,
