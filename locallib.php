@@ -145,10 +145,12 @@ class local_courseduplication_controller
             'courseid' => $course->id,
             'name' => 'automaticenddate'
         ));
-        $DB->update_record('course_format_options', (object)array(
-            'id' => $cfo->id,
-            'value' => $course->automaticenddate
-        ));
+        if ($cfo) {
+            $DB->update_record('course_format_options', (object)array(
+                'id' => $cfo->id,
+                'value' => $course->automaticenddate
+            ));
+        }
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backup['basepath']);
@@ -252,7 +254,7 @@ class local_course_duplication_queue {
         $duplication->shortname = $data->targetshortname;
         $duplication->startdate = $data->targetstartdate;
         $duplication->enddate = $data->targetenddate;
-        $duplication->automaticenddate = $data->targetautomaticenddate;
+        $duplication->automaticenddate = is_null($data->targetautomaticenddate) ? 0 : $data->targetautomaticenddate;
         $duplication->coursegroups = serialize($data->coursegroups);
         $duplication->enrolfromroles = serialize($data->enrolfromroles);
 
