@@ -103,7 +103,7 @@ class courseduplication_duplication_form extends moodleform {
 
         // Enrol from roles.
         $mform->addElement('autocomplete', 'enrolfromroles', get_string('enrolfromroles', 'local_courseduplication'),
-            get_default_enrol_roles($basecoursecontext), array('multiple' => true)
+            get_viewable_roles($basecoursecontext), array('multiple' => true)
         );
         $mform->addHelpButton('enrolfromroles', 'enrolfromroles', 'local_courseduplication');
 
