@@ -204,16 +204,18 @@ class local_courseduplication_controller
 
     public function enrol_from_roles($basecourseid, $newcourseid, $roleidlist) {
         // Get users enrolled in the basecourse with a role included in $roleidlist.
-        $users = array();
+        $enroledusers = get_enrolled_users(context_course::instance($basecourseid));
+        $enroledusersbyroles = array();
         foreach ($roleidlist as $roleid) {
-            if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid))) {
-                $users[$roleid] = $roleusers;
+            // Use get_role_users with parent true, to include users by system roles
+            if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid), true, '', false)) {
+                $enroledusersbyroles[$roleid] = array_intersect_key($roleusers, $enroledusers);
             }
         }
 
         // Enrol these users in the new course.
         $errors = array();
-        foreach ($users as $roleid => $roleusers) {
+        foreach ($enroledusersbyroles as $roleid => $roleusers) {
             foreach ($roleusers as $user) {
                 if (!enrol_try_internal_enrol($newcourseid, $user->id, $roleid)) {
                     $string = new lang_string('warningenrollingfailed', 'local_courseduplication', array(
