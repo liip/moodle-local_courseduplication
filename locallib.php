@@ -51,6 +51,7 @@ class local_courseduplication_controller
             $bc->get_logger()->set_next(new output_indented_logger(backup::LOG_DEBUG, false, true));
         }
 
+        // Can set custom settings here
         foreach ($this->options as $name => $value) {
             $setting = $bc->get_plan()->get_setting($name);
             $setting->set_status(backup_setting::NOT_LOCKED);
@@ -254,8 +255,8 @@ class local_course_duplication_queue {
         $duplication->userid = $userid;
         $duplication->fullname = $data->targetfullname;
         $duplication->shortname = $data->targetshortname;
-        $duplication->startdate = $data->targetstartdate;
-        $duplication->enddate = $data->targetenddate;
+        $duplication->startdate = $data->startdate;
+        $duplication->enddate = $data->enddate;
         $duplication->automaticenddate = is_null($data->targetautomaticenddate) ? 0 : $data->targetautomaticenddate;
         $duplication->coursegroups = serialize($data->coursegroups);
         $duplication->enrolfromroles = serialize($data->enrolfromroles);
@@ -460,6 +461,7 @@ class local_course_duplication_queue {
         $dup = new local_courseduplication_controller();
 
         try {
+            // HERE WE CALL BACKUP
             $backup = $dup->backup_course($course->id, $admin->id);
         } catch (Exception $e) {
             $return[$errors][] = get_string('duplicatefailedbackup', 'local_courseduplication');

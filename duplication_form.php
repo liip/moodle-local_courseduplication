@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 class courseduplication_duplication_form extends moodleform {
 
+    protected $basecourse;
+
     private function get_groups($courseid) {
         $groups = [];
         foreach (groups_get_all_groups($courseid) as $groupobj) {
@@ -43,8 +45,10 @@ class courseduplication_duplication_form extends moodleform {
         $basecourseid = $this->_customdata['id'];
         $basecategoryid = $this->_customdata['categoryid'];
         $basecoursecontext = context_course::instance($basecourseid);
+        $basecategorycontext = context_coursecat::instance($basecategoryid);
+
         /** @var stdClass $basecourse */
-        $basecourse = $DB->get_record('course', array('id' => $basecourseid));
+        $this->basecourse = $DB->get_record('course', array('id' => $basecourseid));
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'id');
@@ -74,16 +78,15 @@ class courseduplication_duplication_form extends moodleform {
         $mform->addRule('targetshortname', get_string('missingshortname'), 'required', null);
 
         // Copied course startdate.
-        $mform->addElement('date_time_selector', 'targetstartdate', get_string('startdate'));
-        $mform->addHelpButton('targetstartdate', 'startdate');
-        $mform->setDefault('targetstartdate', $basecourse->startdate);
+        $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
+        $mform->addHelpButton('startdate', 'startdate');
+        $mform->setDefault('startdate', $this->basecourse->startdate);
 
         // Copied course enddate.
-        $mform->addElement('date_time_selector', 'targetenddate', get_string('enddate'));
-        $mform->addHelpButton('targetenddate', 'enddate');
-        $mform->setDefault('targetenddate', $basecourse->enddate);
-
-        if ($basecourse->format === "weeks") {
+        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'));
+        $mform->addHelpButton('enddate', 'enddate');
+        $mform->setDefault('enddate', $this->basecourse->enddate);
+        if ($this->basecourse->format === "weeks") {
             $baseautomaticenddate = $DB->get_record('course_format_options', array(
                 'courseid' => $basecourseid,
                 'name' => 'automaticenddate'
@@ -92,7 +95,7 @@ class courseduplication_duplication_form extends moodleform {
             $mform->addElement('advcheckbox', 'targetautomaticenddate', get_string('automaticenddate', 'format_weeks'));
             $mform->addHelpButton('targetautomaticenddate', 'automaticenddate', 'format_weeks');
             $mform->setDefault('targetautomaticenddate', $baseautomaticenddate);
-            $mform->disabledIf('targetenddate', 'targetautomaticenddate', 'checked');
+            $mform->disabledIf('enddate', 'targetautomaticenddate', 'checked');
         }
 
         // Copy roles.
@@ -109,6 +112,42 @@ class courseduplication_duplication_form extends moodleform {
 
         $this->add_action_buttons(true, get_string('duplicate', 'local_courseduplication'));
 
+    }
+
+    /**
+     * Validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array the errors that were found
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    function validation($data, $files) {
+        global $DB;
+
+        $errors = parent::validation($data, $files);
+
+        // Add field validation check for duplicate shortname.
+        if ($course = $DB->get_record('course', array('shortname' => $data['targetshortname']), '*', IGNORE_MULTIPLE)) {
+            if (empty($data['id']) || $course->id != $data['id']) {
+                $errors['targetshortname'] = get_string('shortnametaken', '', $course->fullname);
+            }
+        }
+
+        if ($errorcode = course_validate_dates($data)) {
+            $errors['enddate'] = get_string($errorcode, 'error');
+        }
+
+        $targetcategorycontext = context_course::instance($data['categoryid']);
+        $errors = array_merge($errors, enrol_course_edit_validation($data, $targetcategorycontext));
+        $courseformat = course_get_format((object)array('format' => $this->basecourse->format));
+        $formaterrors = $courseformat->edit_form_validation($data, $files, $errors);
+        if (!empty($formaterrors) && is_array($formaterrors)) {
+            $errors = array_merge($errors, $formaterrors);
+        }
+
+        return $errors;
     }
 
 }
