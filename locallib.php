@@ -51,7 +51,7 @@ class local_courseduplication_controller
             $bc->get_logger()->set_next(new output_indented_logger(backup::LOG_DEBUG, false, true));
         }
 
-        // Can set custom settings here
+        // Can set custom settings here.
         foreach ($this->options as $name => $value) {
             $setting = $bc->get_plan()->get_setting($name);
             $setting->set_status(backup_setting::NOT_LOCKED);
@@ -208,7 +208,7 @@ class local_courseduplication_controller
         $enroledusers = get_enrolled_users(context_course::instance($basecourseid));
         $enroledusersbyroles = array();
         foreach ($roleidlist as $roleid) {
-            // Use get_role_users with parent true, to include users by system roles
+            // Use get_role_users with parent true, to include users by system roles.
             if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid), true, '', false)) {
                 $enroledusersbyroles[$roleid] = array_intersect_key($roleusers, $enroledusers);
             }
@@ -461,7 +461,7 @@ class local_course_duplication_queue {
         $dup = new local_courseduplication_controller();
 
         try {
-            // HERE WE CALL BACKUP
+            // HERE WE CALL BACKUP.
             $backup = $dup->backup_course($course->id, $admin->id);
         } catch (Exception $e) {
             $return[$errors][] = get_string('duplicatefailedbackup', 'local_courseduplication');

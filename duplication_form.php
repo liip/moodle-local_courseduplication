@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class courseduplication_duplication_form extends moodleform {
 
+    /** @var stdClass $basecourse */
     protected $basecourse;
 
     private function get_groups($courseid) {
@@ -47,7 +48,6 @@ class courseduplication_duplication_form extends moodleform {
         $basecoursecontext = context_course::instance($basecourseid);
         $basecategorycontext = context_coursecat::instance($basecategoryid);
 
-        /** @var stdClass $basecourse */
         $this->basecourse = $DB->get_record('course', array('id' => $basecourseid));
 
         $mform =& $this->_form;
@@ -123,7 +123,7 @@ class courseduplication_duplication_form extends moodleform {
      * @throws coding_exception
      * @throws dml_exception
      */
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);
