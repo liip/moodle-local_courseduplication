@@ -139,7 +139,7 @@ class courseduplication_duplication_form extends moodleform {
             $errors['enddate'] = get_string($errorcode, 'error');
         }
 
-        $targetcategorycontext = context_course::instance($data['categoryid']);
+        $targetcategorycontext = context_coursecat::instance($data['categoryid']);
         $errors = array_merge($errors, enrol_course_edit_validation($data, $targetcategorycontext));
         $courseformat = course_get_format((object)array('format' => $this->basecourse->format));
         $formaterrors = $courseformat->edit_form_validation($data, $files, $errors);
