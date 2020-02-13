@@ -42,11 +42,9 @@ class courseduplication_duplication_form extends moodleform {
      * @throws dml_exception
      */
     protected function definition() {
-        global $CFG, $DB;
+        global $DB;
         $basecourseid = $this->_customdata['id'];
-        $basecategoryid = $this->_customdata['categoryid'];
         $basecoursecontext = context_course::instance($basecourseid);
-        $basecategorycontext = context_coursecat::instance($basecategoryid);
 
         $this->basecourse = $DB->get_record('course', array('id' => $basecourseid));
 
