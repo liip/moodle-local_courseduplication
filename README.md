@@ -10,6 +10,11 @@ Two capabilities are used to control who can duplicate courses:
 * `local/courseduplication:backup_course`
 * `local/courseduplication:restore_course`
 
+## Debugging
+
+You can force the tasks to be executed from the commandline via:
+> sudo -u www-data php admin/tool/task/cli/schedule_task.php  --execute='\local_courseduplication\task\process_duplicate_queue'
+
 # Authors
 
 This plugin was developed by Liip AG <https://www.liip.ch/>, the swiss Moodle Partner.
