@@ -35,7 +35,7 @@ function xmldb_local_courseduplication_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2019093000) {
+    if ($oldversion < 2019093001) {
 
         $table = new xmldb_table('courseduplication_queue');
         $fields = [
@@ -54,7 +54,7 @@ function xmldb_local_courseduplication_upgrade($oldversion) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2019093000, 'local', 'courseduplication');
+        upgrade_plugin_savepoint(true, 2019093001, 'local', 'courseduplication');
     }
 
     return true;
