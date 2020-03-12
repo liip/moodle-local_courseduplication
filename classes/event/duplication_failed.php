@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 class duplication_failed extends \core\event\base {
 
     protected function init() {
-        $this->data['crud'] = '';
+        $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'course';
     }
@@ -52,8 +52,12 @@ class duplication_failed extends \core\event\base {
     }
 
     public function get_legacy_logdata() {
-        return array($this->courseid,
-            'courseduplication', 'restore', '',
-            "duplication failed.  course id {$this->objectid} to category {$this->data['other']['newcategoryid']}";
+        return array(
+            $this->courseid,
+            'courseduplication',
+            'restore',
+            '',
+            "duplication failed.  course id {$this->objectid} to category {$this->data['other']['newcategoryid']}"
+        );
     }
 }

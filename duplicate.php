@@ -46,7 +46,11 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title($strduplicate);
 $PAGE->set_heading($course->fullname);
 
-$mform = new courseduplication_duplication_form();
+// Init mform with base course id and category id as customdata.
+$mform = new courseduplication_duplication_form(null, array(
+    'categoryid' => $categoryid ? $categoryid : $course->category,
+    'id' => $course->id)
+);
 
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
@@ -80,7 +84,7 @@ if ($form = $mform->get_data()) {
         );
     }
 
-    local_course_duplication_queue::queue($course->id, $category->id, $USER->id);
+    local_course_duplication_queue::queue($USER->id, $form);
 
     $notification = new \core\output\notification(
             get_string('duplicationscheduled', 'local_courseduplication'),
