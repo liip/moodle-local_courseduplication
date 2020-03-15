@@ -81,9 +81,10 @@ class courseduplication_duplication_form extends moodleform {
         $mform->setDefault('startdate', $this->basecourse->startdate);
 
         // Copied course enddate.
-        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'));
+        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
         $mform->addHelpButton('enddate', 'enddate');
         $mform->setDefault('enddate', $this->basecourse->enddate);
+
         if ($this->basecourse->format === "weeks") {
             $baseautomaticenddate = $DB->get_record('course_format_options', array(
                 'courseid' => $basecourseid,
