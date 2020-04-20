@@ -476,6 +476,7 @@ class local_course_duplication_queue {
         $newcourse->shortname = $job->shortname;
         $newcourse->category = $category->id;
 
+        $newcourse->timecreated = time();
         $newcourse->startdate = $job->startdate;
         $newcourse->enddate = $job->enddate;
         $newcourse->automaticenddate = $job->automaticenddate;
