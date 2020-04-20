@@ -203,7 +203,9 @@ class local_courseduplication_controller
         return $errors;
     }
 
-    public function enrol_from_roles($basecourseid, $newcourseid, $roleidlist) {
+    public function enrol_from_roles($basecourseid, $newcourseid, $roleidlist, $jobuser) {
+        global $DB;
+
         // Get users enrolled in the basecourse with a role included in $roleidlist.
         $enroledusers = get_enrolled_users(context_course::instance($basecourseid));
         $enroledusersbyroles = array();
@@ -212,6 +214,11 @@ class local_courseduplication_controller
             if ($roleusers = get_role_users($roleid, context_course::instance($basecourseid), true, '', false)) {
                 $enroledusersbyroles[$roleid] = array_intersect_key($roleusers, $enroledusers);
             }
+        }
+
+        $ehlteacherrole = $DB->get_record('role', array('shortname' => 'editingteacherehl'));
+        if ($ehlteacherrole) {
+            $enroledusersbyroles[$ehlteacherrole->id][$jobuser->id] = $jobuser;
         }
 
         // Enrol these users in the new course.
@@ -457,6 +464,7 @@ class local_course_duplication_queue {
             return $return;
         }
 
+        $jobuser = $DB->get_record('user', array('id' => $job->userid));
         $admin = get_admin();
         $dup = new local_courseduplication_controller();
 
@@ -495,7 +503,12 @@ class local_course_duplication_queue {
 
         array_merge(
             $return[$warnings],
-            $dup->enrol_from_roles($job->courseid, $return[$courseid], unserialize($job->enrolfromroles))
+            $dup->enrol_from_roles(
+                $job->courseid,
+                $return[$courseid],
+                unserialize($job->enrolfromroles),
+                $jobuser
+            )
         );
 
         if ($job->automaticenddate === '1') {
