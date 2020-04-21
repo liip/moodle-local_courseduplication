@@ -79,3 +79,7 @@ $string['enrolfromroles_excluded'] = 'Role(s) selected for enrolment must also b
 $string['enrolfromroles_help'] = 'Automatically enrol (in the new course) the users that have the following roles (in the base course). If you leave "No selection", no enrolment will be replicated.';
 $string['coursegroups'] = 'Course groups';
 $string['coursegroups_help'] = 'Create these groups in the new course';
+
+$string['duplicatorrole'] = 'Course duplicator role';
+$string['duplicatorrole_none'] = 'No auto enrolment...';
+$string['duplicatorrole_help'] = 'Role to assign in the new course, to the user that commanded the course duplication (in addition to other ways of enrolment).';

@@ -216,9 +216,12 @@ class local_courseduplication_controller
             }
         }
 
-        $ehlteacherrole = $DB->get_record('role', array('shortname' => 'editingteacherehl'));
-        if ($ehlteacherrole) {
-            $enroledusersbyroles[$ehlteacherrole->id][$jobuser->id] = $jobuser;
+        $duplicatorroleid = intval(get_config('local_courseduplication', 'duplicatorrole'));
+        if ($duplicatorroleid > 0) {
+            $duplicatorrole = $DB->get_record('role', array('id' => $duplicatorroleid));
+            if ($duplicatorrole) {
+                $enroledusersbyroles[$duplicatorrole->id][$jobuser->id] = $jobuser;
+            }
         }
 
         // Enrol these users in the new course.
