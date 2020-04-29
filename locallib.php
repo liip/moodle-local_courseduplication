@@ -267,7 +267,9 @@ class local_course_duplication_queue {
         $duplication->shortname = $data->targetshortname;
         $duplication->startdate = $data->startdate;
         $duplication->enddate = $data->enddate;
-        $duplication->automaticenddate = (!isset($data->targetautomaticenddate) || is_null($data->targetautomaticenddate)) ? 0 : $data->targetautomaticenddate;
+        $duplication->automaticenddate = (
+            !isset($data->targetautomaticenddate) || is_null($data->targetautomaticenddate)
+        ) ? 0 : $data->targetautomaticenddate;
         $duplication->coursegroups = serialize($data->coursegroups);
         $duplication->enrolfromroles = serialize($data->enrolfromroles);
 
