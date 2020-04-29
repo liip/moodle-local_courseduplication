@@ -10,6 +10,10 @@ Two capabilities are used to control who can duplicate courses:
 * `local/courseduplication:backup_course`
 * `local/courseduplication:restore_course`
 
+## Options
+
+Course duplicator role: Allows to define a default role for the user responsible for duplications
+
 ## Debugging
 
 You can force the tasks to be executed from the commandline via:
