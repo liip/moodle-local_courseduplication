@@ -297,9 +297,11 @@ class local_course_duplication_queue {
 
         foreach ($queued as $job) {
 
-            if (!$userlang = $DB->get_field('user', 'lang', array('id' => $job->userid))) {
-                $userlang = 'en';
-            }
+            $jobuser = $DB->get_record('user', array('id' => $job->userid));
+            $userlang = $jobuser->lang ? $jobuser->lang : 'en';
+            // Switch session to user who initiated the backup,
+            // so we have correct capabilities validation and same user reflected in event.
+            \core\session\manager::set_user($jobuser);
 
             list($status, $errors, $warnings, $newcourseid) = $this->process_job($job, $userlang);
 
@@ -336,6 +338,8 @@ class local_course_duplication_queue {
             $this->send_mail($job, $status, $errors, $warnings, $newcourseid, $userlang);
             $DB->delete_records('courseduplication_queue', array('id' => $job->id));
         }
+        // Switch back to admin.
+        \core\session\manager::set_user(get_admin());
         return $info;
     }
 
