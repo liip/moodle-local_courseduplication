@@ -17,7 +17,7 @@ Course duplicator role: Allows to define a default role for the user responsible
 ## Debugging
 
 You can force the tasks to be executed from the commandline via:
-> sudo -u www-data php admin/tool/task/cli/schedule_task.php  --execute='\local_courseduplication\task\process_duplicate_queue'
+> /opt/orchestration/bin/php /var/www/html/admin/cli/scheduled_task.php --execute='\local_courseduplication\task\process_duplicate_queue'
 
 # Authors
 
