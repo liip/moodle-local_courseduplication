@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package local/courseduplication
+ * @package local_courseduplication
  * @copyright 2014-2020 Liip AG <https://www.liip.ch/>
  * @author Liip <elearning@liip.ch>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
