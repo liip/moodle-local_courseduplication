@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package local/courseduplication
+ * @package local_courseduplication
  * @copyright 2014-2018 Liip AG <https://www.liip.ch/>
  * @author Brian King <brian.king@liip.ch>
  * @author Claude Bossy <claude.bossy@liip.ch>
@@ -34,7 +34,7 @@ $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $PAGE->set_url('/local/courseduplication/duplicate.php', array('id' => $id));
 
 if (! $course = $DB->get_record("course", array('id' => $id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_course_login($course);
@@ -60,7 +60,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('duplicatecourseheader', 'local_courseduplication', $course));
 
 if (!has_capability('local/courseduplication:backup_course', $coursecontext)) {
-    print_error(
+    throw new \moodle_exception(
         'nopermissions',
         'error',
         new moodle_url('/course/view.php', array('id' => $course->id)),
@@ -74,10 +74,10 @@ echo $OUTPUT->box(
 
 if ($form = $mform->get_data()) {
     if (!$category = $DB->get_record('course_categories', array('id' => $form->categoryid))) {
-        print_error('errornosuchcategory', 'local_courseduplication');
+        throw new \moodle_exception('errornosuchcategory', 'local_courseduplication');
     }
     if (!has_capability('local/courseduplication:restore_course', context_coursecat::instance($category->id))) {
-        print_error(
+        throw new \moodle_exception(
             'errornopermsintarget',
             'local_courseduplication',
             new moodle_url('/course/view.php', array('id' => $course->id))

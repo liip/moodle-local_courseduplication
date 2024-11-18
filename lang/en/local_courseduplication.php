@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package local/courseduplication
+ * @package local_courseduplication
  * @copyright 2014-2018 Liip AG <https://www.liip.ch/>
  * @author Brian King <brian.king@liip.ch>
  * @author Claude Bossy <claude.bossy@liip.ch>
@@ -73,6 +73,7 @@ $string['process_duplicate_queue'] = 'Process duplicate queue';
 $string['event_duplication_succeeded'] = 'Course duplication succeeded';
 $string['event_duplication_failed'] = 'Course duplication failed';
 $string['event_duplication_errors'] = 'Course duplication had errors';
+$string['event_duplication_warnings'] = 'Course duplication had warnings';
 
 $string['enrolfromroles'] = 'Enrol users having role(s)';
 $string['enrolfromroles_excluded'] = 'Role(s) selected for enrolment must also be selected in "Course roles" field for creation.';

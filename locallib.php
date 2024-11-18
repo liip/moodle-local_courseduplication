@@ -453,8 +453,7 @@ class local_course_duplication_queue {
 
         // Course to duplicate.
         if (!$course = $DB->get_record('course', array('id' => $job->courseid))) {
-            $return[$errors][] = \
-                get_string('duplicatefailedbackup', 'local_courseduplication') . ': ' . get_string('invalidcourseid');
+            $return[$errors][] = get_string('duplicatefailedbackup', 'local_courseduplication') . ': ' . get_string('invalidcourseid');
         }
 
         // Target category.
