@@ -141,7 +141,8 @@ class courseduplication_duplication_form extends moodleform {
         $targetcategorycontext = context_coursecat::instance($data['categoryid']);
         $errors = array_merge($errors, enrol_course_edit_validation($data, $targetcategorycontext));
         $courseformat = course_get_format((object)array('format' => $this->basecourse->format));
-        $formaterrors = $courseformat->edit_form_validation($data, $files, $errors);
+        $courseformatoptions = $courseformat->get_format_options();
+        $formaterrors = $courseformat->edit_form_validation($courseformatoptions, $files, $errors);
         if (!empty($formaterrors) && is_array($formaterrors)) {
             $errors = array_merge($errors, $formaterrors);
         }
